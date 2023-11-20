@@ -102,15 +102,6 @@ async def about(ctx):
   embed.set_footer(text="Created by notxofo")
   await ctx.send(embed=embed)
 
-@bot.slash_command(name="help", description="Displays a list of commands")
-async def help(ctx):
-  embed = discord.Embed(title="Gato Bot Rewritten", description="A multi-function bot for Discord. Efficiency, Stability and Customizability.", color=discord.Color.green())
-  embed.add_field(name="Moderation", value="`/ban`, `/unban`, `/kick`, `/purge`")
-  embed.add_field(name="Miscellaneous", value="`/reminder`, `/ping`, `/avatar`, `/8ball`, `/about`, `/help`")
-  embed.add_field(name="Utility", value="`/serverinfo`")
-  embed.set_footer(text="Created by notxofo")
-  await ctx.send(embed=embed)
-
 @bot.slash_command(name="dog", description="Sends a random dog image")
 async def dog(ctx):
   await ctx.send("https://dog.ceo/api/breeds/image/random")
@@ -118,5 +109,39 @@ async def dog(ctx):
 @bot.slash_command(name="cat", description="Sends a random cat image")
 async def cat(ctx):
   await ctx.send("https://api.thecatapi.com/v1/images/search")
+
+@bot.slash_command(name="userinfo", description="Displays information about the selected user")
+async def userinfo(ctx, user_id: int):
+  user = await bot.fetch_user(user_id)
+  if user:
+    embed = discord.Embed(title="User Info", color=discord.Color.blue())
+    embed.add_field(name="Username", value=user.name, inline=False)
+    embed.add_field(name="User ID", value=user.id, inline=False)
+    embed.add_field(name="Account Creation Date", value=user.created_at.strftime('%Y-%m-%d %H:%M:%S'), inline=False)
+    await ctx.send(embed=embed)
+  else:
+    await ctx.send("https://http.cat/images/404.jpg")
+
+@bot.slash_command(name="servericon", description="Displays the server's icon")
+async def servericon(ctx):
+  guild = ctx.guild
+  icon = guild.icon_url
+  await ctx.send(icon)
+
+@bot.slash_command(name="serverbanner", description="Displays the server's banner")
+async def serverbanner(ctx):
+  guild = ctx.guild
+  banner = guild.banner_url
+  await ctx.send(banner)
+
+@bot.slash_command(name="stealemoji", description="Steals an emoji via URL", permissions=["manage_emojis"])
+async def stealemoji(ctx, emoji_url: str, emoji_name: str):
+  await ctx.guild.create_custom_emoji(name=emoji_name, image=emoji_url)
+  await ctx.send(f"Emoji {emoji_name} has been added to the server!")
+
+@bot.slash_command(name="slowmode", description="Sets the channel's slowmode", permissions=["manage_channels"])
+async def slowmode(ctx, seconds: int):
+  await ctx.channel.edit(slowmode_delay=seconds)
+  await ctx.send(f"Slowmode set to {seconds} seconds!")
 
 bot.run(token)
