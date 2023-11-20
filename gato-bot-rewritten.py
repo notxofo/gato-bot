@@ -95,4 +95,11 @@ async def eight_ball(ctx, question: str):
                "Very doubtful."]
   await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
 
+@bot.slash_command(name="about", description="Displays information about the bot")
+async def about(ctx):
+  embed = discord.Embed(title="Gato Bot Rewritten", description=" A multi-function bot for Discord. Efficiency, Stability and Customizability.", color=discord.Color.green())
+  embed.add_field(name="GitHub", value="[GitHub Repository](https://github.com/notxofo/gato-bot-rewritten)")
+  embed.set_footer(text="Created by notxofo")
+  await ctx.send(embed=embed)
+
 bot.run(token)
