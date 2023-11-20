@@ -102,4 +102,21 @@ async def about(ctx):
   embed.set_footer(text="Created by notxofo")
   await ctx.send(embed=embed)
 
+@bot.slash_command(name="help", description="Displays a list of commands")
+async def help(ctx):
+  embed = discord.Embed(title="Gato Bot Rewritten", description="A multi-function bot for Discord. Efficiency, Stability and Customizability.", color=discord.Color.green())
+  embed.add_field(name="Moderation", value="`/ban`, `/unban`, `/kick`, `/purge`")
+  embed.add_field(name="Miscellaneous", value="`/reminder`, `/ping`, `/avatar`, `/8ball`, `/about`, `/help`")
+  embed.add_field(name="Utility", value="`/serverinfo`")
+  embed.set_footer(text="Created by notxofo")
+  await ctx.send(embed=embed)
+
+@bot.slash_command(name="dog", description="Sends a random dog image")
+async def dog(ctx):
+  await ctx.send("https://dog.ceo/api/breeds/image/random")
+
+@bot.slash_command(name="cat", description="Sends a random cat image")
+async def cat(ctx):
+  await ctx.send("https://api.thecatapi.com/v1/images/search")
+
 bot.run(token)
