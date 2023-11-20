@@ -12,6 +12,7 @@ bot = discord.Bot(intents=discord.Intents.all())
 @bot.event
 async def on_ready():
   print(f"Logged in as {bot.user.name}")
+  print("Welcome to Gato Bot Rewritten, created by Xofo!")
 
 @bot.slash_command(name="ban", description="Bans the selected user from the server", permissions=["ban_members"])
 async def ban(ctx, user: discord.User, reason: str = "No reason provided"):
@@ -99,7 +100,7 @@ async def eight_ball(ctx, question: str):
 async def about(ctx):
   embed = discord.Embed(title="Gato Bot Rewritten", description="A multi-function bot for Discord. Efficiency, Stability and Customizability.", color=discord.Color.green())
   embed.add_field(name="GitHub", value="[GitHub Repository](https://github.com/notxofo/gato-bot-rewritten)")
-  embed.set_footer(text="Created by notxofo")
+  embed.set_footer(text="Contact: notxofo")
   await ctx.send(embed=embed)
 
 @bot.slash_command(name="dog", description="Sends a random dog image")
@@ -143,5 +144,14 @@ async def stealemoji(ctx, emoji_url: str, emoji_name: str):
 async def slowmode(ctx, seconds: int):
   await ctx.channel.edit(slowmode_delay=seconds)
   await ctx.send(f"Slowmode set to {seconds} seconds!")
+
+@bot.slash_command(name="poll" , description="Creates a poll", permissions=["manage_messages"])
+async def poll(ctx, question: str, option1: str, option2: str):
+  embed = discord.Embed(title=question, color=discord.Color.blue())
+  embed.add_field(name="Option 1", value=option1, inline=False)
+  embed.add_field(name="Option 2", value=option2, inline=False)
+  message = await ctx.send(embed=embed)
+  await message.add_reaction("✅")
+  await message.add_reaction("❌")
 
 bot.run(token)
