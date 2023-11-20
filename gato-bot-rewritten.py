@@ -2,6 +2,8 @@ import discord
 import json
 import asyncio
 import random
+import requests
+import aiohttp
 
 with open('config.json') as config_file:
   data = json.load(config_file)
@@ -46,7 +48,7 @@ async def ping(ctx):
 
 @bot.slash_command(name="avatar", description="Returns the user's avatar")
 async def avatar(ctx, user: discord.User):
-  avatar_url = user.avatar_url
+  avatar_url = user.avatar.url
   await ctx.send(avatar_url)
 
 @bot.slash_command(name="purge", description="Purges the selected amount of messages", permissions=["manage_messages"])
@@ -105,11 +107,13 @@ async def about(ctx):
 
 @bot.slash_command(name="dog", description="Sends a random dog image")
 async def dog(ctx):
-  await ctx.send("https://dog.ceo/api/breeds/image/random")
+  dogpicture = requests.get("https://dog.ceo/api/breeds/image/random").json().get("message", "Not found")
+  await ctx.send(f"{dogpicture}")
 
 @bot.slash_command(name="cat", description="Sends a random cat image")
 async def cat(ctx):
-  await ctx.send("https://api.thecatapi.com/v1/images/search")
+  catpicture = requests.get("https://api.thecatapi.com/v1/images/search").json()[0].get("url", "Not found")
+  await ctx.send(f"{catpicture}")
 
 @bot.slash_command(name="userinfo", description="Displays information about the selected user")
 async def userinfo(ctx, user_id: int):
@@ -126,19 +130,33 @@ async def userinfo(ctx, user_id: int):
 @bot.slash_command(name="servericon", description="Displays the server's icon")
 async def servericon(ctx):
   guild = ctx.guild
-  icon = guild.icon_url
-  await ctx.send(icon)
+  if guild.icon:
+    icon = guild.icon.url
+    await ctx.send(icon)
+  else:
+    await ctx.send("This server does not have an icon.")
 
 @bot.slash_command(name="serverbanner", description="Displays the server's banner")
 async def serverbanner(ctx):
   guild = ctx.guild
-  banner = guild.banner_url
-  await ctx.send(banner)
+  if guild.banner:
+    banner = guild.banner.url
+    await ctx.send(banner)
+  else:
+    await ctx.send("This server does not have a banner.")
 
 @bot.slash_command(name="stealemoji", description="Steals an emoji via URL", permissions=["manage_emojis"])
 async def stealemoji(ctx, emoji_url: str, emoji_name: str):
-  await ctx.guild.create_custom_emoji(name=emoji_name, image=emoji_url)
-  await ctx.send(f"Emoji {emoji_name} has been added to the server!")
+  if emoji_url.endswith((".png", ".jpg", ".jpeg", ".gif")):
+    async with aiohttp.ClientSession() as session:
+      async with session.get(emoji_url) as resp:
+        if resp.status != 200:
+          return await ctx.send('Could not download file...')
+        data = await resp.read()
+    await ctx.guild.create_custom_emoji(name=emoji_name, image=data)
+    await ctx.send(f"Emoji {emoji_name} has been added to the server!")
+  else:
+    await ctx.send("Error adding emoji. Please check the URL and make sure you are using the correct image format. If the error persists, please contact the bot owner.")
 
 @bot.slash_command(name="slowmode", description="Sets the channel's slowmode", permissions=["manage_channels"])
 async def slowmode(ctx, seconds: int):
@@ -151,7 +169,7 @@ async def poll(ctx, question: str, option1: str, option2: str):
   embed.add_field(name="Option 1", value=option1, inline=False)
   embed.add_field(name="Option 2", value=option2, inline=False)
   message = await ctx.send(embed=embed)
-  await message.add_reaction("✅")
-  await message.add_reaction("❌")
+  await message.add_reaction("1️⃣")
+  await message.add_reaction("2️⃣")
 
 bot.run(token)
