@@ -1,5 +1,6 @@
 # Gato Bot Rewritten
 - A multi-function bot for Discord. Efficient, Stable and Customizable.
+- Requirements: discord.py | aiohttp | requests
 
 This project is a rewritten version of [Gato Bot](https://github.com/gato-services/gato-bot) by [@gato-services](https://github.com/gato-services).
 It is built from the ground up with source code from the original project.
