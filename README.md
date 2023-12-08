@@ -79,3 +79,8 @@ Displays the server's icon.
 `/serverbanner`
 
 Displays the server's banner.
+
+## Invite command
+`/invite`
+
+Displays the bots official invite link, hosting coming later.
